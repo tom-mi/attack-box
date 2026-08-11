@@ -1,0 +1,7 @@
+- name: link bash includes
+  file:
+    dest: '/root/.bashrc.d/{{ item }}'
+    src: '/mnt/tools/bashrc/{{ item }}'
+    state: link
+  loop:
+    - ctf.bash

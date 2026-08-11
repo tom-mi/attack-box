@@ -1,0 +1,27 @@
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+HISTCONTROL=ignoreboth
+shopt -s histappend
+
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+shopt -s checkwinsize
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+if ! shopt -oq posix; then
+  if [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+for file in ~/.bashrc.d/*.bash;
+do
+    source "${file}"
+done

@@ -1,0 +1,11 @@
+- name: install packages
+  apt:
+    pkg:
+      - qemu-guest-agent
+      - spice-vdagent
+
+- name: copy auto-resolution-daemon
+  copy:
+    src: auto-resolution-daemon
+    dest: /usr/local/bin
+    mode: 0700

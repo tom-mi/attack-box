@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -eu
+
+# cd into script dir
+cd $(dirname $BASH_SOURCE)
+
+
+ansible-playbook playbook.yaml

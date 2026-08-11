@@ -1,0 +1,78 @@
+#!/bin/bash
+# Post-install script to bootstrap mount points & further configuration
+
+set -eu
+
+echo "Configuring mount points..."
+mkdir -p /mnt/configuration /mnt/tools /mnt/transfer
+
+# Add to fstab
+# 9p mounts for configuration and tools
+if ! grep -q "configuration" /etc/fstab; then
+    echo "configuration /mnt/configuration 9p trans=virtio,version=9p2000.L,ro,nofail 0 0" >> /etc/fstab
+fi
+
+if ! grep -q "tools" /etc/fstab; then
+    echo "tools /mnt/tools 9p trans=virtio,version=9p2000.L,ro,nofail 0 0" >> /etc/fstab
+fi
+
+if ! grep -q "transfer" /etc/fstab; then
+    echo "transfer /mnt/transfer 9p trans=virtio,version=9p2000.L,ro,nofail,noauto 0 0" >> /etc/fstab
+fi
+
+# Create first-run script
+cat << 'EOF' > /usr/local/bin/first-run
+#!/bin/bash
+set -eu
+
+echo "Running first-run script..."
+
+# Wait for network
+sleep 10
+
+# Install ansible
+apt-get update
+apt-get install -y ansible
+
+# Run the apply script
+if [ -d /mnt/configuration ]; then
+    mount /mnt/configuration || true
+    cd /mnt/configuration
+    ./apply
+else
+    echo "Error: /mnt/configuration not found"
+    exit 1
+fi
+
+# Disable the service so it doesn't run again
+systemctl disable first-run.service
+
+echo "First-run completed. Rebooting..."
+reboot
+EOF
+
+chmod +x /usr/local/bin/first-run
+
+# Create systemd service for first-run
+cat << 'EOF' > /etc/systemd/system/first-run.service
+[Unit]
+Description=First Run Script
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=/usr/local/bin/first-run
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/first-run
+StandardOutput=journal+console
+StandardError=journal+console
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable first-run.service
+
+
+
+

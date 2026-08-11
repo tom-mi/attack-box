@@ -1,0 +1,38 @@
+- name: install packages
+  apt:
+    pkg:
+      - i3
+      - alacritty
+      - xorg
+
+- name: configure i3status
+  template:
+    src: i3status.conf
+    dest: /etc/i3status.conf
+
+- name: configure i3
+  copy:
+    src: i3.conf
+    dest: /etc/i3/config
+
+- name: create alacritty config dir
+  file:
+    dest: /root/.config/alacritty
+    state: directory
+
+- name: configure alacritty
+  copy:
+    src: 'alacritty/{{ item }}'
+    dest: '/root/.config/alacritty/{{ item }}'
+  loop:
+    - alacritty.toml
+    - dracula.toml
+
+- name: configure xinitrc
+  copy:
+    dest: /root/.xinitrc
+    content: |
+      # workaround for starting x from terminal
+      export SHLVL=0
+      
+      exec i3

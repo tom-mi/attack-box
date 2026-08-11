@@ -1,0 +1,5 @@
+---
+- apt:
+    pkg:
+      - unattended-upgrades
+      - apt-listchanges

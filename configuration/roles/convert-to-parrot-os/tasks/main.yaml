@@ -1,0 +1,59 @@
+---
+# See https://gitlab.com/parrotsec/project/debian-conversion-script for the official way how to do that
+
+- name: install keyring
+  apt:
+    deb: '{{ parrot_keyring_url }}'
+
+- name: ensure git is installed
+  apt:
+    pkg:
+      - git
+    state: present
+
+- name: clone debian-conversion-script repository
+  git:
+    repo: '{{ parrot_conversion_script_repo }}'
+    dest: '{{ parrot_conversion_script_dest }}'
+    version: main
+    force: true
+
+- name: copy parrot configuration files
+  copy:
+    src: '{{ parrot_conversion_script_dest }}/{{ item.src }}'
+    dest: '{{ item.dest }}'
+    remote_src: true
+  loop: '{{ parrot_config_files }}'
+  loop_control:
+    label: '{{ item.dest }}'
+  register: parrot_config_files_copy
+
+- name: update apt cache
+  apt:
+    update_cache: true
+  when: parrot_config_files_copy.changed
+
+- name: upgrade installed packages
+  apt:
+    upgrade: yes
+    state: present
+  when: parrot_config_files_copy.changed
+
+- name: install core edition packages
+  apt:
+    pkg:
+      - parrot-core
+    state: present
+
+## ===== cleanup - revert some of the stupid skel settings =====
+- name: remove unwanted files in skel
+  file:
+    path: '/etc/skel/{{ item }}'
+    state: absent
+  loop: '{{ parrot_skel_paths_to_remove }}'
+
+- name: remove unwanted files in root home
+  file:
+    path: '/root/{{ item }}'
+    state: absent
+  loop: '{{ parrot_skel_paths_to_remove }}'

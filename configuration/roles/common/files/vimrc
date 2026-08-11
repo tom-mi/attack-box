@@ -1,0 +1,11 @@
+set nocp
+packadd! CtrlP
+
+syntax on
+set smartindent
+set softtabstop=4
+set expandtab
+set shiftwidth=4
+
+syntax enable
+colorscheme dracula

@@ -1,0 +1,22 @@
+- name: install packages
+  apt:
+    pkg:
+      - fontconfig
+      - fonts-recommended
+- name: create terminess directory
+  file:
+    dest: /usr/local/share/fonts/TerminessNerdFont
+    state: directory
+
+- name: install terminess font
+  unarchive:
+    src: 'https://github.com/ryanoasis/nerd-fonts/releases/download/{{ terminess_nerd_font_version }}/Terminus.zip'
+    dest: /usr/local/share/fonts/TerminessNerdFont/
+    remote_src: yes
+    creates: /usr/local/share/fonts/TerminessNerdFont/TerminessNerdFont-Regular.ttf
+  register: font_installed
+
+- name: update front cache
+  command:
+    cmd: fc-cache -f
+  when: font_installed.changed

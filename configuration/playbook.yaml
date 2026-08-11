@@ -1,0 +1,22 @@
+---
+- name: Initial configuration
+  hosts: localhost
+  connection: local
+  vars:
+    i3status:
+      ethernet_devices:
+        - name: _first_
+          label: E
+        - name: tun0
+          label: V
+  roles:
+    - role: common-handlers
+    - role: convert-to-parrot-os
+    - role: common
+    - role: vm-guest
+    - role: fonts
+    - role: autologin
+    - role: unattended-upgrades
+    - role: i3
+    - role: tools
+    - role: custom-tools

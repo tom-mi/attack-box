@@ -1,0 +1,116 @@
+---
+# Commonly used packages
+- name: install packages
+  apt:
+    pkg:
+      - 7zip
+      - ack-grep
+      - apt-transport-https
+      - autojump
+      - bash-completion
+      - bwm-ng
+      - console-setup
+      - curl
+      - dnsutils
+      - gdisk
+      - git
+      - htop
+      - liquidprompt
+      - locate
+      - mailutils
+      - nmap
+      - screen
+      - tree
+      - vim-nox
+      - vim-ctrlp
+      - zip
+
+- name: vim alternative
+  community.general.alternatives:
+    name: vim
+    path: /usr/bin/vim.nox
+
+- name: setup vim dracula theme - create dir
+  file:
+    path: /root/.vim/pack/themes/start
+    state: directory
+
+- name: clone dracaula theme
+  git:
+    repo: https://github.com/dracula/vim.git
+    dest: /root/.vim/pack/themes/start/dracula
+
+- name: copy vimrc
+  copy:
+    src: vimrc
+    dest: /root/.vimrc
+
+- name: clear default vimrc
+  copy:
+    content: ''
+    dest: /etc/vim/vimrc
+
+- name: copy bashrc
+  copy:
+    src: bashrc
+    dest: /root/.bashrc
+
+- name: create bashrc dir
+  file:
+    dest: /root/.bashrc.d
+    state: directory
+
+- name: copy profile
+  copy:
+    src: profile
+    dest: /root/.profile
+
+- name: setup liquidprompt
+  copy:
+    dest: /root/.bashrc.d/liquidprompt.bash
+    content: |
+      # Only load Liquid Prompt in interactive shells, not from a script or from scp
+      [[ $- = *i* ]] && source /usr/share/liquidprompt/liquidprompt
+
+- name: configure liquidprompt
+  copy:
+    dest: /etc/liquidpromptrc
+    content: |
+      LP_ENABLE_TITLE=1
+
+- name: add aliases
+  copy:
+    dest: /root/.bash_aliases
+    content: |
+      # export LS_OPTIONS='--color=auto'
+      eval "$(dircolors)"
+      alias ls='ls $LS_OPTIONS'
+      alias ll='ls $LS_OPTIONS -l'
+
+- name: set keyboard layout
+  lineinfile:
+    line: '{{ item.key }}="{{ item.value }}"'
+    regexp: '^{{ item.key }}='
+    path: /etc/default/keyboard
+    create: yes
+  with_dict:
+    XKBLAYOUT: us,de
+    XKBVARIANT: dvp,
+    XKBOPTIONS: grp:alt_shift_toggle
+
+- name: install packages for keyboard-configuration
+  apt:
+    pkg:
+      - console-setup
+      - keyboard-configuration
+
+- name: enable keyboard-setup service
+  systemd:
+    service: keyboard-setup
+    enabled: yes
+
+- name: replace cron with systemd-cron for sanity - no more stupid cron mails
+  apt:
+    pkg:
+      - systemd-cron
+    state: present

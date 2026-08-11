@@ -1,0 +1,25 @@
+---
+parrot_keyring_url: "https://deb.parrot.sh/parrot/pool/main/p/parrot-archive-keyring/parrot-archive-keyring_2024.12_all.deb"
+parrot_keyring_path: "/usr/share/keyrings/parrot-archive-keyring.gpg"
+
+parrot_conversion_script_repo: "https://gitlab.com/parrotsec/project/debian-conversion-script.git"
+parrot_conversion_script_dest: "/tmp/debian-conversion-script"
+
+parrot_config_files:
+  - src: config/system/etc/apt/sources.list.d/parrot.list
+    dest: /etc/apt/sources.list.d/parrot.list
+  - src: config/system/etc/apt/sources.list
+    dest: /etc/apt/sources.list
+  - src: config/system/etc/apt/listchanges.conf
+    dest: /etc/apt/listchanges.conf
+  - src: config/system/etc/os-release
+    dest: /etc/os-release
+
+parrot_components:
+  - main
+  - contrib
+  - non-free
+  - non-free-firmware
+
+parrot_skel_paths_to_remove:
+  - .config/i3

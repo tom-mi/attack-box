@@ -1,0 +1,13 @@
+- name: create override dir
+  file:
+    dest: '/etc/systemd/system/getty@{{ autologin_tty }}.service.d'
+    state: directory
+
+- name: install autologin config
+  copy:
+    dest: '/etc/systemd/system/getty@{{ autologin_tty }}.service.d/override.conf'
+    content: |
+      [Service]
+      ExecStart=
+      ExecStart=-/usr/sbin/agetty --autologin {{ autologin_user }} --noreset --noclear %I ${TERM}
+      Type=idle

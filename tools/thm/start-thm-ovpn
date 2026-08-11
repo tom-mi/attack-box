@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -eu
+
+systemctl stop openvpn-client@thm
+
+if [[ $# -ne 1 ]]; then
+  echo "Usage: $0 /path/to/profile.ovpn" 1>&2
+  exit 1
+fi
+
+cp  ${1} /etc/openvpn/client/thm.conf
+
+systemctl daemon-reload
+systemctl start openvpn-client@thm

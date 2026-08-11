@@ -1,0 +1,7 @@
+__pycache__
+*.pyc
+.idea
+/preseed/preseed.cfg
+
+/transfer
+!/transfer/.gitkeep

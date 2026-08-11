@@ -1,0 +1,36 @@
+- name: install basic packages
+  apt:
+    pkg:
+      - binutils
+      - burpsuite
+      - dirb
+      - firefox-esr
+      - git
+      - gobuster
+      - hydra
+      - iputils-tracepath
+      - jp
+      - jq
+      - libjson-perl # needed for nikto
+      - libxml-writer-perl # needed for nikto
+      - nikto
+      - nmap
+      - openvpn # for tryhackme.com
+      - parrot-firefox-profiles
+      - libnet-ssleay-perl # needed for nikto
+      - seclists
+      - tealdeer
+      - wordlists
+
+- name: unzip rockyou wordlist
+  command:
+    cmd: gunzip rockyou.txt.gz
+    chdir: /usr/share/wordlists/
+    creates: /usr/share/wordlists/rockyou.txt
+
+- name: install iis_shortname_scanner # needed for https://tryhackme.com/room/webserverattacks2
+  git:
+    repo: https://github.com/lijiejie/IIS_shortname_Scanner
+    version: 4a921768f10fb4dc6b2999ef2cfe5dad0e39056c
+    depth: 1
+    dest: /opt/IIS_shortname_Scanner
