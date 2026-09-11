@@ -1,14 +1,18 @@
 - name: install basic packages
   apt:
     pkg:
+      - bat
       - binutils
       - burpsuite
+      - cargo # to install other tools, see below
       - dirb
       - firefox-esr
+      - ffuf
       - git
       - gobuster
       - hydra
       - iputils-tracepath
+      - john
       - jp
       - jq
       - libjson-perl # needed for nikto
@@ -34,3 +38,16 @@
     version: 4a921768f10fb4dc6b2999ef2cfe5dad0e39056c
     depth: 1
     dest: /opt/IIS_shortname_Scanner
+
+
+- name: Install tools via cargo
+  community.general.cargo:
+    locked: true
+    name:
+      - htmlq
+
+- name: add cargo bin folder to PATH
+  copy:
+    dest: /root/.bashrc.d/cargo_path.bash
+    content: |
+      export PATH="$PATH:$HOME/.cargo/bin"
