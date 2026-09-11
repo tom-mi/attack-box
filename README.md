@@ -6,7 +6,7 @@ for me (... probably only me).
 The idea is to create throwaway boxes (VMs), as isolated as reasonable while still convenient, with all personal
 tooling, customisations, and configuration stored outside under version control.
 
-Features:
+## Features
 
 * qemu/kvm VM via userspace libvirt
 * installer wrapping virt-install & Debian preseed
@@ -21,7 +21,34 @@ Features:
     * tools (read-only) containing custom scripts
     * transfer (read/write, no automount) to move files in and out
 
+## Usage
+
+Run 
+```
+./scripts/create-vm.sh
+```
+and follow the instructions, or see
+```
+./script/create-vm.sh --help
+```
+for more information. If you observe errors, you probably need to install missing dependencies for your libvirt setup.
+
+Once the installations is complete, start the VM with
+```
+virsh start --domain attack-box
+```
+and connect to the console, e.g. with one of the following tools:
+```
+virt-manager --connect qemu:///session --show-domain-console attack-box
+virt-viewer attack-box
+remmina -c spice://127.0.0.1:5900
+```
+
+## Adopt
+
 Feel free to fork and adapt to your needs.
+
+* you probably want to adapt at least the [keyboard layout](configuration/roles/common/vars/main.yml)
 
 ## License
 
