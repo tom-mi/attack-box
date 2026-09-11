@@ -139,8 +139,6 @@ def generate_preseed(root_password, locale, timezone, hostname):
         locale=locale,
         timezone=timezone,
         hostname=hostname,
-        layoutcode=xkb_settings['layout'],
-        variantcode=xkb_settings['variant'],
     )
 
     preseed_path = Path(__file__).parent.parent / "preseed" / "preseed.cfg"
