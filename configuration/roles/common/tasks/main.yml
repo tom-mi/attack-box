@@ -93,10 +93,7 @@
     regexp: '^{{ item.key }}='
     path: /etc/default/keyboard
     create: yes
-  with_dict:
-    XKBLAYOUT: us,de
-    XKBVARIANT: dvp,
-    XKBOPTIONS: grp:alt_shift_toggle
+  with_dict: '{{ keyboard_layout }}'
 
 - name: install packages for keyboard-configuration
   apt:

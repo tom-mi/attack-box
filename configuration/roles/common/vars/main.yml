@@ -1,0 +1,6 @@
+---
+keyboard_layout:
+  XKBLAYOUT: us,de
+  XKBVARIANT: dvp,
+  XKBOPTIONS: grp:alt_shift_toggle,caps:escape,lv3:ralt_switch,compose:102
+
