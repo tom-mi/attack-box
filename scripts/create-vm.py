@@ -27,39 +27,10 @@ def get_system_timezone():
     return "UTC"
 
 
-def get_system_xkb_settings():
-    settings = {
-        'layout': 'us',
-        'variant': '',
-        'model': 'pc105',
-        'options': ''
-    }
-    try:
-        result = subprocess.run(["localectl", "status"], capture_output=True, text=True)
-        for line in result.stdout.splitlines():
-            line = line.strip()
-            if "X11 Layout:" in line:
-                settings['layout'] = line.split(":")[-1].strip()
-            elif "X11 Variant:" in line:
-                settings['variant'] = line.split(":")[-1].strip()
-            elif "X11 Model:" in line:
-                settings['model'] = line.split(":")[-1].strip()
-            elif "X11 Options:" in line:
-                settings['options'] = line.split(":")[-1].strip()
-    except:
-        pass
-    return settings
-
-
 INSTALLER_IMAGE_URL = "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-13.6.0-amd64-netinst.iso"
-#INSTALLER_IMAGE_URL = "https://cdimage.kali.org/kali-2026.2/kali-linux-2026.2-installer-netinst-amd64.iso"
-# INSTALLER_IMAGE_URL = "https://cdimage.kali.org/kali-2026.2/kali-linux-2026.2-installer-amd64.iso"
+INSTALLER_IMAGE_SHA256_SUM = "65273beed27b2df543b68b65630ba525cfbad8df2b12035732b2dff87d6664e7"
 
-INSTALLER_IMAGE_SHA256_SUM = None  # Add SHA256 sum here if known
-# INSTALLER_IMAGE_SHA256_SUM = "d32f929dacc48134a31461a09f2160d13ad1d26b820cee920446813ca979b39b"
-# INSTALLER_IMAGE_SHA256_SUM = "6dbefacc95e3b556c19c48e8bae39b8b505e2d3a1aba0bfb7ab62b036c3d2ba3"
 DEFAULT_LOCALE = get_system_locale()
-SYSTEM_XKB_SETTINGS = get_system_xkb_settings()
 DEFAULT_TIMEZONE = get_system_timezone()
 
 
@@ -136,8 +107,7 @@ def get_random_password():
 
 
 def prepare_installer_image(image_url, expected_hash):
-    # downloads_dir = Path.home() / "Downloads"
-    downloads_dir = Path("/var/tmp")
+    downloads_dir = Path.home() / "Downloads"
     downloads_dir.mkdir(parents=True, exist_ok=True)
     iso_name = image_url.split("/")[-1]
     iso_path = downloads_dir / iso_name
@@ -153,7 +123,7 @@ def prepare_installer_image(image_url, expected_hash):
     return iso_path
 
 
-def generate_preseed(root_password, locale, timezone, hostname, xkb_settings):
+def generate_preseed(root_password, locale, timezone, hostname):
     template_path = Path(__file__).parent.parent / "preseed" / "preseed.template.cfg"
     if not template_path.exists():
         print(f"Template not found at {template_path}")
@@ -230,7 +200,6 @@ def main():
         locale=args.locale,
         timezone=args.timezone,
         hostname=args.name,
-        xkb_settings=SYSTEM_XKB_SETTINGS
     )
 
     project_root = Path(__file__).parent.parent.absolute()
@@ -238,7 +207,7 @@ def main():
     tools_path = project_root / "tools"
     transfer_path = project_root / "transfer"
 
-    connection = "qemu:///system" if os.geteuid() == 0 else "qemu:///session"
+    connection = "qemu:///session"
     run_virt_install(connection, args.name, args.cpu, args.ram, iso_path, preseed_path, config_path, tools_path,
                      transfer_path)
 
