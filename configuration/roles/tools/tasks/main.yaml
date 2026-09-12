@@ -1,4 +1,4 @@
-- name: install basic packages
+- name: install packages via apt
   apt:
     pkg:
       - bat
@@ -40,7 +40,7 @@
     dest: /opt/IIS_shortname_Scanner
 
 
-- name: Install tools via cargo
+- name: install tools via cargo
   community.general.cargo:
     locked: true
     name:
