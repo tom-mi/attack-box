@@ -23,6 +23,7 @@ tooling, customisations, and configuration stored outside under version control.
 
 ## Usage
 
+### Create VM
 Run 
 ```
 ./scripts/create-vm.sh
@@ -42,6 +43,24 @@ and connect to the console, e.g. with one of the following tools:
 virt-manager --connect qemu:///session --show-domain-console attack-box
 virt-viewer attack-box
 remmina -c spice://127.0.0.1:5900
+```
+
+### Useful commands within VM
+
+Start i3
+```
+startx
+```
+
+Mount / unmount writable transfer dir (not auto-mounted)
+```
+mount /mnt/transfer
+umount /mnt/transfer
+```
+
+Apply configuration via ansible
+```
+/mnt/configuration/apply
 ```
 
 ## Adopt

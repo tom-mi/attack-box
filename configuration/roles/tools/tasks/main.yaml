@@ -6,6 +6,7 @@
       - burpsuite
       - cargo # to install other tools, see below
       - dirb
+      - feroxbuster
       - firefox-esr
       - ffuf
       - git
@@ -23,7 +24,9 @@
       - parrot-firefox-profiles
       - libnet-ssleay-perl # needed for nikto
       - seclists
+      - smbclient
       - tealdeer
+      - tnftp
       - wordlists
 
 - name: unzip rockyou wordlist
@@ -51,3 +54,9 @@
     dest: /root/.bashrc.d/cargo_path.bash
     content: |
       export PATH="$PATH:$HOME/.cargo/bin"
+      
+
+- name: populate tldr cache
+  command:
+    cmd: tldr --update
+    creates: /root/.cache/tldr
